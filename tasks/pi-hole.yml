@@ -21,3 +21,5 @@
     project_src: "{{ config_dir }}/pi-hole/"
     build: false
   become: false
+  vars:
+    ansible_python_interpreter: /usr/local/bin/python3

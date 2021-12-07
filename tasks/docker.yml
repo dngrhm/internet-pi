@@ -11,19 +11,25 @@
     url: https://get.docker.com/
     dest: /tmp/get-docker.sh
     mode: 0775
-  when: docker_command_result.rc == 1
+  when:
+    - ansible_facts.os_family != "Darwin"
+    - docker_command_result.rc == 1
 
 - name: Run Docker install convenience script.
   ansible.builtin.command: /tmp/get-docker.sh
   environment:
     CHANNEL: stable
-  when: docker_command_result.rc == 1
+  when:
+    - ansible_facts.os_family != "Darwin"
+    - docker_command_result.rc == 1
 
 - name: Ensure Docker is started.
   ansible.builtin.service:
     name: docker
     state: started
     enabled: true
+  when:
+    - ansible_facts.os_family != "Darwin"
 
 - name: Ensure dependencies are installed (Debian).
   ansible.builtin.apt:
@@ -49,17 +55,54 @@
     state: present
   when: ansible_facts.os_family == "Archlinux"
 
+- name: Ensure cask dependencies are installed (Darwin).
+  community.general.homebrew_cask:
+    name:
+      - docker
+    state: present
+    update_homebrew: yes
+  become: no
+  when: ansible_facts.os_family == "Darwin"
+
+- name: Ensure dependencies are installed (Darwin).
+  community.general.homebrew:
+    name:
+      - libffi
+      - openssl
+      - python3
+      - git
+      - rsync
+    state: present
+    update_homebrew: yes
+  become: no
+  when: ansible_facts.os_family == "Darwin"
+
 - name: Install Docker Compose using Pip.
   ansible.builtin.pip:
     name: docker-compose
     state: present
     executable: pip3
+  when:
+    - ansible_facts.os_family != "Darwin"
+
+- name: Install Docker using Pip (Mac).
+  ansible.builtin.pip:
+    name:
+      - docker
+      - requests
+      - docker-compose
+    state: present
+    executable: pip3
+  when:
+    - ansible_facts.os_family == "Darwin"
 
 - name: Ensure {{ ansible_user }} user is added to the docker group.
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups: docker
     append: true
+  when:
+    - ansible_facts.os_family != "Darwin"
 
 # reset_connection doesn't support conditionals.
 - name: Reset connection so docker group is picked up.

@@ -47,3 +47,5 @@
     project_src: "{{ config_dir }}/internet-monitoring/"
     build: false
   become: false
+  vars:
+    ansible_python_interpreter: /usr/local/bin/python3
