@@ -1,0 +1,13 @@
+- name: Internal serivces
+  hosts: internal_services
+  user: dgraham
+  pre_tasks:
+    - name: Load configuration (with defaults from example file).
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - example.config.yml
+        - config.yml
+  roles:
+    - docker
+    - pihole
+    - internet-monitoring

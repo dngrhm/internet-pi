@@ -1,5 +1,5 @@
 ---
-- hosts: internet_pi
+- hosts: internal_services
   become: true
 
   pre_tasks:
