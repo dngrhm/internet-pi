@@ -85,6 +85,18 @@
   when:
     - ansible_facts.os_family != "Darwin"
 
+### uncomment if getting multiple docker version errors
+# - name: Uninstall Docker-py using Pip (Mac).
+#   ansible.builtin.pip:
+#     name:
+#       - docker
+#       - docker-py
+#     state: absent
+#     executable: pip3
+#   become: yes
+#   when:
+#     - ansible_facts.os_family == "Darwin"
+
 - name: Install Docker using Pip (Mac).
   ansible.builtin.pip:
     name:
@@ -93,6 +105,7 @@
       - docker-compose
     state: present
     executable: pip3
+  become: yes
   when:
     - ansible_facts.os_family == "Darwin"
 
