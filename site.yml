@@ -8,6 +8,7 @@
         - example.config.yml
         - config.yml
   roles:
-    - docker
-    - pihole
-    - internet-monitoring
+    # - docker
+    # - pihole
+    # - internet-monitoring
+    - proxy
